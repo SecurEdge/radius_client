@@ -115,7 +115,7 @@ module Radiustar
 
     def attribute(name)
       if @attributes[name]
-        @attributes[name].is_a?(Array) ? @attributes[name].map(&:value) : @attributes[name]
+        @attributes[name].is_a?(Array) ? @attributes[name].map(&:value) : @attributes[name].value
       end
     end
 
