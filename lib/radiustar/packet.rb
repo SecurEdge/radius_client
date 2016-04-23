@@ -291,6 +291,10 @@ module Radiustar
               when "ipv6addr"
                 ipi = @value.to_ip.to_i
                 [ ipi >> 96, ipi >> 64, ipi >> 32, ipi ].pack("NNNN")
+              when "ipv6prefix"
+                ipi = @value.to_ip.to_i
+                mask = @value.to_ip.length
+                [ 0, mask, ipi >> 96, ipi >> 64, ipi >> 32, ipi ].pack("CCNNNN")
               when "date"
                 [@value].pack("N")
               when "time"
