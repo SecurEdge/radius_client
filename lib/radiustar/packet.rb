@@ -174,6 +174,12 @@ module Radiustar
                               attribute.has_values? ? attribute.find_values_by_id(attribute_value.unpack("N")[0]).name : attribute_value.unpack("N")[0]
                             when 'ipaddr'
                               attribute_value.unpack("N")[0].to_ip.to_s
+                            when 'ipv6addr'
+                              a=attribute_value.unpack("NNNN")
+                              ((a[0]<<96)+(a[1]<<64)+(a[2]<<32)+a[3]).to_ip.to_s
+                            when 'ipv6prefix'
+                              a=attribute_value.unpack("CCNNNN")
+                              ((a[2]<<96)+(a[3]<<64)+(a[4]<<32)+a[5]).to_ip.to_s+"/#{a[1]}"
                             when 'time'
                               attribute_value.unpack("N")[0]
                             when 'date'
