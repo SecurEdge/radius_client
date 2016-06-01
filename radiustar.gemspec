@@ -1,59 +1,40 @@
-# -*- encoding: utf-8 -*-
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'radiustar/version'
 
-Gem::Specification.new do |s|
-  s.name = "radiustar"
-  s.version = "0.0.9"
+Gem::Specification.new do |spec|
+  spec.name          = 'radiustar'
+  spec.version       = Radiustar::VERSION
+  spec.authors       = %w(PJ\ Davis Slava\ Kisel)
+  spec.email         = %w(slava.kisel@flatstack.com)
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["PJ Davis"]
-  s.date = "2012-07-23"
-  s.description = "Ruby Radius Library"
-  s.email = "slava.kisel@flatstack.com"
-  s.extra_rdoc_files = ["History.txt", "README.rdoc", "templates/default.txt"]
-  s.files = [
-    "CHANGELOG.md",
-    "README.rdoc",
-    "Rakefile",
-    "lib/radiustar.rb",
-    "lib/radiustar/dictionary.rb",
-    "lib/radiustar/dictionary/attributes.rb",
-    "lib/radiustar/dictionary/values.rb",
-    "lib/radiustar/old_hash.rb",
-    "lib/radiustar/packet.rb",
-    "lib/radiustar/radiustar.rb",
-    "lib/radiustar/request.rb",
-    "lib/radiustar/vendor.rb",
-    "radiustar.gemspec",
-    "spec/radiustar_spec.rb",
-    "spec/spec_helper.rb",
-    "spec/value_spec.rb",
-    "templates/default.txt",
-    "templates/dictionary.digium",
-    "templates/dictionary.rfc2865",
-    "templates/gandalf.dictionary",
-    "test/test_radiustar.rb",
-    "version.txt"
-  ]
-  s.homepage = "http://github.com/slavakisel/radiustar"
-  s.rdoc_options = ["--main", "README.rdoc"]
-  s.require_paths = ["lib"]
-  s.rubyforge_project = "radiustar"
-  s.rubygems_version = "2.2.3"
-  s.summary = "."
-  s.test_files = ["spec/**/*_spec.rb"]
+  spec.summary       = 'Ruby wrapper for freeradius server'
+  spec.description   = 'Ruby wrapper for freeradius server'
+  spec.license       = 'CC0 1.0 Universal'
 
-  if s.respond_to? :specification_version then
-    s.specification_version = 3
-
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<ipaddr_extensions>, ["~> 1.0.0"])
-      s.add_development_dependency(%q<bones>, [">= 3.7.3"])
-    else
-      s.add_dependency(%q<ipaddr_extensions>, ["~> 1.0.0"])
-      s.add_dependency(%q<bones>, [">= 3.7.3"])
-    end
+  # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
+  # delete this section to allow pushing this gem to any host.
+  if spec.respond_to?(:metadata)
+    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
   else
-    s.add_dependency(%q<ipaddr_extensions>, ["~> 1.0.0"])
-    s.add_dependency(%q<bones>, [">= 3.7.3"])
+    raise 'RubyGems 2.0 or newer is required to protect against public gem pushes.'
   end
+
+  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|templates)/}) }
+  spec.bindir        = 'exe'
+  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.require_paths = %w(lib)
+
+  spec.add_development_dependency 'bundler', '~> 1.10'
+  spec.add_development_dependency 'minitest-vcr', '~> 1.4.0'
+  spec.add_development_dependency 'minitest'
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'vcr', '~> 3.0.1'
+  spec.add_development_dependency 'webmock', '~> 1.24.1'
+  spec.add_development_dependency 'simplecov', '~> 0.11.2'
+  spec.add_development_dependency 'minitest-reporters', '1.1.9'
+
+  spec.add_runtime_dependency 'ipaddr_extensions', '1.0.2'
 end

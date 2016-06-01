@@ -1,20 +1,10 @@
+require 'bundler/gem_tasks'
+require 'rake/testtask'
 
-begin
-  require 'bones'
-rescue LoadError
-  abort '### Please install the "bones" gem ###'
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.test_files = FileList['test/**/*_test.rb']
 end
 
-task :default => 'test:run'
-task 'gem:release' => 'test:run'
-
-Bones {
-  name        'radiustar'
-  authors     'PJ Davis'
-  email       'pj.davis@gmail.com'
-  url         'http://github.com/pjdavis/radiustar'
-  ignore_file '.gitignore'
-  readme_file 'README.rdoc'
-  depend_on 'ipaddr_extensions'
-}
-
+task default: :test

@@ -55,9 +55,7 @@ module Radiustar
         end
       else
         @authenticator = []
-        8.times do
-          @authenticator << rand(65536)
-        end
+        8.times { @authenticator << rand(65536) }
         @authenticator = @authenticator.pack("n8")
       end
     end

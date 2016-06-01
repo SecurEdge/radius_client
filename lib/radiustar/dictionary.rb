@@ -8,7 +8,7 @@ module Radiustar
       @attributes = AttributesCollection.new
       @vendors = VendorCollection.new
 
-      read_files initial_path if initial_path
+      read_files(initial_path) if initial_path
     end
 
     def read_files(path)
