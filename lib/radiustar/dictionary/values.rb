@@ -1,7 +1,5 @@
 module Radiustar
-
   class ValuesCollection < Array
-
     def initialize
       @collection = {}
       @revcollection = {}
@@ -24,11 +22,9 @@ module Radiustar
     def empty?
       @collection.empty?
     end
-
   end
 
   class Value
-
     include Radiustar
 
     attr_accessor :name, :id
@@ -37,7 +33,5 @@ module Radiustar
       @name = name
       @id = id.to_i
     end
-
   end
-
 end

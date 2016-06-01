@@ -1,24 +1,28 @@
 module Radiustar
-
   require 'digest/md5'
   require 'ipaddr_extensions'
-  require File.join(File.expand_path(File.dirname __FILE__), "old_hash") if RUBY_VERSION < '1.9.0'
-
 
   class Packet
+    CODES = {
+      'Access-Request' => 1,
+      'Access-Accept' => 2,
+      'Access-Reject' => 3,
+      'Accounting-Request' => 4,
+      'Accounting-Response' => 5,
+      'Access-Challenge' => 11,
+      'Status-Server' => 12,
+      'Status-Client' => 13,
+      'Disconnect-Request' => 40,
+      'Disconnect-ACK' => 41,
+      'Disconnect-NAK' => 42,
+      'CoA-Request' => 43,
+      'CoA-ACK' => 44,
+      'CoA-NAK' => 45
+    }.freeze
 
-    CODES = { 'Access-Request' => 1,        'Access-Accept' => 2,
-              'Access-Reject' => 3,         'Accounting-Request' => 4,
-              'Accounting-Response' => 5,   'Access-Challenge' => 11,
-              'Status-Server' => 12,        'Status-Client' => 13,
-              'Disconnect-Request' => 40,   'Disconnect-ACK' => 41,
-              'Disconnect-NAK' => 42,       'CoA-Request' => 43,
-              'CoA-ACK' => 44,              'CoA-NAK' => 45 }
-
-
-    HDRLEN = 1 + 1 + 2 + 16     # size of packet header
-    P_HDR = "CCna16a*"  # pack template for header
-    P_ATTR = "CCa*"             # pack template for attribute
+    HDRLEN = (1 + 1 + 2 + 16).freeze # size of packet header
+    PACK_HEADER = ("CCna16a*").freeze # pack template for header
+    PACK_ATTR = ("CCa*").freeze # pack template for attribute
 
     attr_accessor :code
     attr_reader :id, :attributes, :authenticator
@@ -134,8 +138,12 @@ module Radiustar
     end
 
     def decode_attribute(name, secret)
-      if @attributes[name]
-        @attributes[name].is_a?(Array) ? @attributes[name].map{|a| decode(a.value.to_s, secret) } : decode(@attributes[name].value.to_s, secret)
+      return unless @attributes[name]
+
+      if @attributes[name].is_a?(Array)
+        @attributes[name].map{ |a| decode(a.value.to_s, secret) }
+      else
+        decode(@attributes[name].value.to_s, secret)
       end
     end
 
@@ -144,7 +152,7 @@ module Radiustar
       @attributes.values.each do |attribute|
         attstr += attribute.is_a?(Array) ? attribute.map(&:pack).join : attribute.pack
       end
-      @packed = [CODES[@code], @id, attstr.length + HDRLEN, @authenticator, attstr].pack(P_HDR)
+      @packed = [CODES[@code], @id, attstr.length + HDRLEN, @authenticator, attstr].pack(PACK_HEADER)
     end
 
     protected
@@ -160,7 +168,7 @@ module Radiustar
     end
 
     def unpack
-      @code, @id, len, @authenticator, attribute_data = @packed.unpack(P_HDR)
+      @code, @id, len, @authenticator, attribute_data = @packed.unpack(PACK_HEADER)
       raise "Incomplete Packet(read #{@packed.length} != #{len})" if @packed.length != len
 
       @code = CODES.key(@code)
@@ -223,12 +231,14 @@ module Radiustar
     def encode(value, secret)
       lastround = @authenticator
       encoded_value = ""
+
       # pad to 16n bytes
       value += "\000" * (15-(15 + value.length) % 16)
       0.step(value.length-1, 16) do |i|
         lastround = xor_str(value[i, 16], Digest::MD5.digest(secret + lastround) )
         encoded_value += lastround
       end
+
       encoded_value
     end
 
@@ -246,19 +256,13 @@ module Radiustar
     end
 
     class Attribute
-
       attr_reader :dict, :name, :vendor
       attr_accessor :value
 
-      def initialize dict, name, value, vendor=nil
+      def initialize(dict, name, value, vendor = nil)
+        add_vsa(name)
+
         @dict = dict
-        # This is the cheapest and easiest way to add VSA's!
-        if (name && (chunks = name.split('/')) && (chunks.size == 2))
-          @vendor = chunks[0]
-          @name = chunks[1]
-        else
-          @name = name
-        end
         @vendor ||= vendor
         @value = value.is_a?(Attribute) ? value.to_s : value
       end
@@ -268,17 +272,13 @@ module Radiustar
       end
 
       def pack
-        attribute = if (vendor? && (@dict.vendors.find_by_name(@vendor)))
-                      @dict.vendors.find_by_name(@vendor).attributes.find_by_name(@name)
-                    else
-                      @dict.find_attribute_by_name(@name)
-                    end
+        attribute = define_pack_attribute
         raise "Undefined attribute '#{@name}'." if attribute.nil?
 
         if vendor?
-          pack_vendor_specific_attribute attribute
+          pack_vendor_specific_attribute(attribute)
         else
-          pack_attribute attribute
+          pack_attribute(attribute)
         end
       end
 
@@ -292,7 +292,25 @@ module Radiustar
 
       private
 
-      def pack_vendor_specific_attribute attribute
+      # This is the cheapest and easiest way to add VSA's!
+      def add_vsa(name)
+        if (name && (chunks = name.split('/')) && (chunks.size == 2))
+          @vendor = chunks[0]
+          @name = chunks[1]
+        else
+          @name = name
+        end
+      end
+
+      def define_pack_attribute
+        if vendor? && (@dict.vendors.find_by_name(@vendor))
+          @dict.vendors.find_by_name(@vendor).attributes.find_by_name(@name)
+        else
+          @dict.find_attribute_by_name(@name)
+        end
+      end
+
+      def pack_vendor_specific_attribute(attribute)
         inside_attribute = pack_attribute attribute
         vid = attribute.vendor.id.to_i
         header = [ 26, inside_attribute.size + 6 ].pack("CC") # 26: Type = Vendor-Specific, 4: length of Vendor-Id field
@@ -300,41 +318,42 @@ module Radiustar
         header + inside_attribute
       end
 
-      def pack_attribute attribute
+      def pack_attribute(attribute)
         anum = attribute.id
-        val = case attribute.type
-              when "string", "octets"
-                @value
-              when "integer"
-                raise "Invalid value name '#{@value}'." if attribute.has_values? && attribute.find_values_by_name(@value).nil?
-                [attribute.has_values? ? attribute.find_values_by_name(@value).id : @value].pack("N")
-              when "ipaddr"
-                [@value.to_ip.to_i].pack("N")
-              when "ipv6addr"
-                ipi = @value.to_ip.to_i
-                [ ipi >> 96, ipi >> 64, ipi >> 32, ipi ].pack("NNNN")
-              when "ipv6prefix"
-                ipi = @value.to_ip.to_i
-                mask = @value.to_ip.length
-                [ 0, mask, ipi >> 96, ipi >> 64, ipi >> 32, ipi ].pack("CCNNNN")
-              when "date"
-                [@value].pack("N")
-              when "time"
-                [@value].pack("N")
-              else
-                ""
-              end
+        val = pack_attribute_val(attribute)
+
         begin
-        [anum,
-          val.length + 2,
-          val
-        ].pack(P_ATTR)
+          [anum, val.length + 2, val].pack(PACK_ATTR)
         rescue
           puts "#{@name} => #{@value}"
           puts [anum, val.length + 2, val].inspect
         end
       end
 
+      def pack_attribute_val(attribute)
+        case attribute.type
+        when "string", "octets"
+          @value
+        when "integer"
+          raise "Invalid value name '#{@value}'." if attribute.has_values? && attribute.find_values_by_name(@value).nil?
+          [attribute.has_values? ? attribute.find_values_by_name(@value).id : @value].pack("N")
+        when "ipaddr"
+          [@value.to_ip.to_i].pack("N")
+        when "ipv6addr"
+          ipi = @value.to_ip.to_i
+          [ ipi >> 96, ipi >> 64, ipi >> 32, ipi ].pack("NNNN")
+        when "ipv6prefix"
+          ipi = @value.to_ip.to_i
+          mask = @value.to_ip.length
+          [ 0, mask, ipi >> 96, ipi >> 64, ipi >> 32, ipi ].pack("CCNNNN")
+        when "date"
+          [@value].pack("N")
+        when "time"
+          [@value].pack("N")
+        else
+          ""
+        end
+      end
     end
   end
 end

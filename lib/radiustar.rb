@@ -1,6 +1,4 @@
-
 module Radiustar
-
   # :stopdoc:
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
@@ -58,8 +56,6 @@ module Radiustar
 
     Dir.glob(search_me).sort.each {|rb| require rb}
   end
-
-end  # module Radiustar
+end
 
 Radiustar.require_all_libs_relative_to(__FILE__)
-

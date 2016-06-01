@@ -1,7 +1,5 @@
 module Radiustar
-
   class VendorCollection < Array
-
     def initialize
       @collection = {}
       @revcollection = []
@@ -20,11 +18,9 @@ module Radiustar
     def find_by_id(id)
       @revcollection[id.to_i]
     end
-
   end
 
   class Vendor
-
     include Radiustar
 
     attr_reader :name, :id
@@ -54,7 +50,5 @@ module Radiustar
     def attributes
       @attributes
     end
-
   end
-
 end

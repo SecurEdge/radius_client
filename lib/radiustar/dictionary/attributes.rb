@@ -1,7 +1,5 @@
 module Radiustar
-
   class AttributesCollection < Array
-
     attr_accessor :vendor
 
     def initialize vendor=nil
@@ -31,11 +29,9 @@ module Radiustar
     def vendor?
       !!@vendor
     end
-
   end
 
   class Attribute
-
     include Radiustar
 
     attr_reader :name, :id, :type, :vendor
@@ -71,7 +67,5 @@ module Radiustar
     def vendor?
       !!@vendor
     end
-
   end
-
 end

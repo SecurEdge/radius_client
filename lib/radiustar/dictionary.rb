@@ -1,7 +1,5 @@
 module Radiustar
-
   class Dictionary
-
     include Radiustar
 
     DEFAULT_DICTIONARIES_PATH = ::File.join(::File.dirname(__FILE__), '..', '..', 'templates')
@@ -22,7 +20,7 @@ module Radiustar
         read_values(file)
       }
     end
-    
+
     def find_attribute_by_name(name)
       @attributes.find_by_name(name)
     end
@@ -52,15 +50,13 @@ module Radiustar
     end
 
     class << self
-
       def default
         new DEFAULT_DICTIONARIES_PATH
       end
-
     end
 
     protected
-    
+
     def read_attributes(path)
       file = File.open(path) do |f|
         current_vendor = nil
@@ -134,7 +130,5 @@ module Radiustar
     def set_vendor_value(vendor, line)
       vendor.find_attribute_by_name(line[1]).add_value(line[2], line[3])
     end
-
   end
-
 end

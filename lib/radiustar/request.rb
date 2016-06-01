@@ -1,9 +1,7 @@
 module Radiustar
-
   require 'socket'
 
   class Request
-
     def initialize(server, options = {})
       @host, @port = server.split(":")
 
@@ -71,7 +69,7 @@ module Radiustar
       reply = { :code => @received_packet.code }
       reply.merge @received_packet.attributes
     end
-    
+
     def accounting_request(status_type, name, secret, sessionid, user_attributes = {})
 
       @packet = Packet.new(@dict, Process.pid & 0xff)
@@ -177,7 +175,5 @@ module Radiustar
     ensure
        Socket.do_not_reverse_lookup = orig_reverse_lookup_setting
     end
-
   end
-
 end
