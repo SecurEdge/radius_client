@@ -38,14 +38,6 @@ module Radiustar
       self
     end
 
-    def increment_id
-      @id = (@id + 1) & 0xff
-    end
-
-    def to_a
-      @attributes.to_a
-    end
-
     # Generate an authenticator. It will try to use /dev/urandom if
     # possible, or the system rand call if that's not available.
     def gen_auth_authenticator
@@ -109,6 +101,12 @@ module Radiustar
 
     def set_attribute(name, value)
       set_attribute_with(name, Attribute.new(@dict, name, value))
+    end
+
+    def set_attributes(options)
+      options.each do |name, value|
+        set_attribute_with(name, Attribute.new(@dict, name, value))
+      end
     end
 
     def unset_attribute(name)

@@ -1,10 +1,6 @@
 module Radiustar
   class Dictionary
-    include Radiustar
-
-    DEFAULT_DICTIONARIES_PATH = ::File.join(::File.dirname(__FILE__), '..', '..', 'templates')
-
-    def initialize(initial_path = nil)
+    def initialize(initial_path)
       @attributes = AttributesCollection.new
       @vendors = VendorCollection.new
 
@@ -13,12 +9,8 @@ module Radiustar
 
     def read_files(path)
       dict_files = File.join(path, "*")
-      Dir.glob(dict_files) { |file|
-        read_attributes(file)
-      }
-      Dir.glob(dict_files) { |file|
-        read_values(file)
-      }
+      Dir.glob(dict_files) { |file| read_attributes(file) }
+      Dir.glob(dict_files) { |file| read_values(file) }
     end
 
     def find_attribute_by_name(name)
@@ -29,30 +21,12 @@ module Radiustar
       @attributes.find_by_id(id)
     end
 
-    def attribute_name_defined?(name)
-      !@attributes.find_by_name(name).nil?
-    end
-
-    def attribute_id_defined?(id)
-      !@attributes.find_by_id(id).nil?
-    end
-
     def vendors
       @vendors
     end
 
     def attributes
       @attributes
-    end
-
-    def name
-      "Dictionary"
-    end
-
-    class << self
-      def default
-        new DEFAULT_DICTIONARIES_PATH
-      end
     end
 
     protected

@@ -32,8 +32,6 @@ module Radiustar
   end
 
   class Attribute
-    include Radiustar
-
     attr_reader :name, :id, :type, :vendor
 
     def initialize(name, id, type, vendor=nil)

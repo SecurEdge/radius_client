@@ -25,8 +25,6 @@ module Radiustar
   end
 
   class Value
-    include Radiustar
-
     attr_accessor :name, :id
 
     def initialize(name, id)

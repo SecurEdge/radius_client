@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 describe Radiustar::VERSION do
   it "is not nil" do

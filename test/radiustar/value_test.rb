@@ -1,5 +1,4 @@
-require 'test_helper'
-require 'pry'
+require "test_helper"
 
 describe Radiustar::Value do
   it "should get numeric value of NAS-Port-Type == Ethernet from dictionary.rfc2865" do

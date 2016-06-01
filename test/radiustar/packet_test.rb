@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 describe Radiustar::Packet do
   it "gen_authenticator generates a random string without /dev/urandom" do

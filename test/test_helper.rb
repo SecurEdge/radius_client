@@ -8,6 +8,7 @@ $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "radiustar"
 require "minitest/autorun"
 require "minitest/reporters"
+require "pry"
 # require "webmock/minitest"
 # require "vcr"
 # require "minitest-vcr"

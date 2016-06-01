@@ -21,8 +21,6 @@ module Radiustar
   end
 
   class Vendor
-    include Radiustar
-
     attr_reader :name, :id
 
     def initialize(name, id)
@@ -41,10 +39,6 @@ module Radiustar
 
     def find_attribute_by_id(id)
       @attributes.find_by_id(id.to_i)
-    end
-
-    def has_attributes?
-      !@attributes.empty?
     end
 
     def attributes
