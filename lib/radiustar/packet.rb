@@ -106,7 +106,7 @@ module Radiustar
     end
 
     def set_attribute(name, value)
-      @attributes[name] = Attribute.new(@dict, name, value)
+      set_attribute_with(name, Attribute.new(@dict, name, value))
     end
 
     def unset_attribute(name)
@@ -115,7 +115,7 @@ module Radiustar
 
     def attribute(name)
       if @attributes[name]
-        @attributes[name].value
+        @attributes[name].is_a?(Array) ? @attributes[name].map(&:value) : @attributes[name].value
       end
     end
 
@@ -124,7 +124,7 @@ module Radiustar
     end
 
     def set_encoded_attribute(name, value, secret)
-      @attributes[name] = Attribute.new(@dict, name, encode(value, secret))
+      set_attribute_with(name, Attribute.new(@dict, name, encode(value, secret)))
     end
 
     def set_chap_password(name, password)
@@ -135,19 +135,29 @@ module Radiustar
 
     def decode_attribute(name, secret)
       if @attributes[name]
-        decode(@attributes[name].value.to_s, secret)
+        @attributes[name].is_a?(Array) ? @attributes[name].map{|a| decode(a.value.to_s, secret) } : decode(@attributes[name].value.to_s, secret)
       end
     end
 
     def pack
       attstr = ""
       @attributes.values.each do |attribute|
-        attstr += attribute.pack
+        attstr += attribute.is_a?(Array) ? attribute.map(&:pack).join : attribute.pack
       end
       @packed = [CODES[@code], @id, attstr.length + HDRLEN, @authenticator, attstr].pack(P_HDR)
     end
 
     protected
+
+    def set_attribute_with(name, value)
+      if @attributes[name].nil?
+        @attributes[name] = value
+      elsif @attributes[name].is_a?(Array)
+        @attributes[name].push value
+      else
+        @attributes[name] = [@attributes[name], value]
+      end
+    end
 
     def unpack
       @code, @id, len, @authenticator, attribute_data = @packed.unpack(P_HDR)
