@@ -9,6 +9,7 @@ Ruby Radius Server Library
 * Accounting
 
 #### SYNOPSIS:
+
 ```ruby
 
 require 'rubygems'
@@ -59,7 +60,12 @@ end
 
 `gem install radiustar`
 
+#### DEVELOPMENT:
+
+After cloning the project install gems with `bundle`. Run `rake test` to check tests.
+
 #### Thanks:
+
 Thanks to everyone who has contributed to this project.
 Without your help and support, this would not have been possible.
 
