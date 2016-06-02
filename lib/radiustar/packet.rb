@@ -4,20 +4,20 @@ require "ipaddr_extensions"
 module Radiustar
   class Packet
     CODES = {
-      'Access-Request' => 1,
-      'Access-Accept' => 2,
-      'Access-Reject' => 3,
-      'Accounting-Request' => 4,
-      'Accounting-Response' => 5,
-      'Access-Challenge' => 11,
-      'Status-Server' => 12,
-      'Status-Client' => 13,
-      'Disconnect-Request' => 40,
-      'Disconnect-ACK' => 41,
-      'Disconnect-NAK' => 42,
-      'CoA-Request' => 43,
-      'CoA-ACK' => 44,
-      'CoA-NAK' => 45
+      "Access-Request" => 1,
+      "Access-Accept" => 2,
+      "Access-Reject" => 3,
+      "Accounting-Request" => 4,
+      "Accounting-Response" => 5,
+      "Access-Challenge" => 11,
+      "Status-Server" => 12,
+      "Status-Client" => 13,
+      "Disconnect-Request" => 40,
+      "Disconnect-ACK" => 41,
+      "Disconnect-NAK" => 42,
+      "CoA-Request" => 43,
+      "CoA-ACK" => 44,
+      "CoA-NAK" => 45
     }.freeze
 
     HDRLEN = (1 + 1 + 2 + 16).freeze # size of packet header
@@ -39,7 +39,7 @@ module Radiustar
     end
 
     # Generate an authenticator. It will try to use /dev/urandom if
-    # possible, or the system rand call if that's not available.
+    # possible, or the system rand call if that"s not available.
     def gen_auth_authenticator
       if (File.exist?("/dev/urandom"))
         File.open("/dev/urandom") do |urandom|
@@ -188,21 +188,21 @@ module Radiustar
 
         if attribute
           attribute_value = case attribute.type
-                            when 'string', "octets"
+                            when "string", "octets"
                               attribute_value
-                            when 'integer'
+                            when "integer"
                               attribute.has_values? ? attribute.find_values_by_id(attribute_value.unpack("N")[0]).name : attribute_value.unpack("N")[0]
-                            when 'ipaddr'
+                            when "ipaddr"
                               attribute_value.unpack("N")[0].to_ip.to_s
-                            when 'ipv6addr'
+                            when "ipv6addr"
                               a=attribute_value.unpack("NNNN")
                               ((a[0]<<96)+(a[1]<<64)+(a[2]<<32)+a[3]).to_ip.to_s
-                            when 'ipv6prefix'
+                            when "ipv6prefix"
                               a=attribute_value.unpack("CCNNNN")
                               ((a[2]<<96)+(a[3]<<64)+(a[4]<<32)+a[5]).to_ip.to_s+"/#{a[1]}"
-                            when 'time'
+                            when "time"
                               attribute_value.unpack("N")[0]
-                            when 'date'
+                            when "date"
                               attribute_value.unpack("N")[0]
                             end
 
@@ -218,10 +218,10 @@ module Radiustar
     end
 
     def xor_str(str1, str2)
-      bstr1 = str1.unpack('C*')
-      bstr2 = str2.unpack('C*')
+      bstr1 = str1.unpack("C*")
+      bstr2 = str2.unpack("C*")
 
-      bstr1.zip(bstr2).map {|b1, b2| b1 ^ b2}.pack('C*')
+      bstr1.zip(bstr2).map {|b1, b2| b1 ^ b2}.pack("C*")
     end
 
     def encode(value, secret)
@@ -269,7 +269,7 @@ module Radiustar
 
       def pack
         attribute = define_pack_attribute
-        raise "Undefined attribute '#{@name}'." if attribute.nil?
+        raise "Undefined attribute \"#{@name}\"." if attribute.nil?
 
         if vendor?
           pack_vendor_specific_attribute(attribute)
@@ -278,19 +278,11 @@ module Radiustar
         end
       end
 
-      def inspect
-        @value
-      end
-
-      def to_s
-        @value
-      end
-
       private
 
-      # This is the cheapest and easiest way to add VSA's!
+      # This is the cheapest and easiest way to add VSA"s!
       def add_vsa(name)
-        if (name && (chunks = name.split('/')) && (chunks.size == 2))
+        if (name && (chunks = name.split("/")) && (chunks.size == 2))
           @vendor = chunks[0]
           @name = chunks[1]
         else
@@ -331,7 +323,7 @@ module Radiustar
         when "string", "octets"
           @value
         when "integer"
-          raise "Invalid value name '#{@value}'." if attribute.has_values? && attribute.find_values_by_name(@value).nil?
+          raise "Invalid value name \"#{@value}\"." if attribute.has_values? && attribute.find_values_by_name(@value).nil?
           [attribute.has_values? ? attribute.find_values_by_name(@value).id : @value].pack("N")
         when "ipaddr"
           [@value.to_ip.to_i].pack("N")
