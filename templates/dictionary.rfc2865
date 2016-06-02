@@ -50,6 +50,9 @@ ATTRIBUTE	CHAP-Challenge				60	octets
 ATTRIBUTE	NAS-Port-Type				61	integer
 ATTRIBUTE	Port-Limit				62	integer
 ATTRIBUTE	Login-LAT-Port				63	string
+ATTRIBUTE	Acct-Status-Type			40	integer
+ATTRIBUTE	Acct-Session-Id				44	string
+ATTRIBUTE	Acct-Authentic				45	integer
 
 #
 #	Integer Translations
@@ -136,3 +139,22 @@ VALUE	NAS-Port-Type			xDSL			16
 VALUE	NAS-Port-Type			Cable			17
 VALUE	NAS-Port-Type			Wireless-Other		18
 VALUE	NAS-Port-Type			Wireless-802.11		19
+
+VALUE	Acct-Status-Type		Start			1
+VALUE	Acct-Status-Type		Stop			2
+VALUE	Acct-Status-Type		Alive			3   # dup
+VALUE	Acct-Status-Type		Interim-Update		3
+VALUE	Acct-Status-Type		Accounting-On		7
+VALUE	Acct-Status-Type		Accounting-Off		8
+VALUE	Acct-Status-Type		Failed			15
+VALUE	Acct-Status-Type		Tunnel-Start		9
+VALUE	Acct-Status-Type		Tunnel-Stop		10
+VALUE	Acct-Status-Type		Tunnel-Reject		11
+VALUE	Acct-Status-Type		Tunnel-Link-Start	12
+VALUE	Acct-Status-Type		Tunnel-Link-Stop	13
+VALUE	Acct-Status-Type		Tunnel-Link-Reject	14
+
+VALUE	Acct-Authentic			RADIUS			1
+VALUE	Acct-Authentic			Local			2
+VALUE	Acct-Authentic			Remote			3
+VALUE	Acct-Authentic			Diameter		4

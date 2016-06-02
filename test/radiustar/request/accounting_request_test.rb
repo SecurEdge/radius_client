@@ -3,8 +3,24 @@ require "test_helper"
 describe Radiustar::Request do
   DICT = Radiustar::Dictionary.new('templates')
 
-  def new_request
-    Radiustar::Request.new("127.0.0.1:1812", { dict: DICT, secret: "testing123" })
+  def new_request(socket = nil)
+    Radiustar::Request.new("127.0.0.1:1812", { dict: DICT, secret: "testing123", socket: socket })
+  end
+
+  def accounting_response
+    [
+      "\x05\xB7\x00\x14\xB6\xFE\x06>\x02\xAF\x17|\x8D03,+\xF2\x1C\xBB",
+      ["AF_INET", 1813, "127.0.0.1", "127.0.0.1"]
+    ]
+  end
+
+  it "can send accounting_request" do
+    req_socket = UDPSocket.open
+    request = new_request(req_socket)
+
+    req_socket.stub :recvfrom, accounting_response do
+      assert request.accounting(:start, "testing", rand(65565).to_s)
+    end
   end
 
   describe "Prepared requests" do

@@ -10,8 +10,8 @@ describe Radiustar::Request do
     secret: "testing123"
   }.freeze
 
-  def new_request
-    Radiustar::Request.new("127.0.0.1:1812", REQUEST_OPTIONS)
+  def new_request(socket = nil)
+    Radiustar::Request.new("127.0.0.1:1812", REQUEST_OPTIONS.merge(socket: socket))
   end
 
   it "correctly initializes attributes" do
