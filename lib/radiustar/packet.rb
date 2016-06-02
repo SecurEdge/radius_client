@@ -1,7 +1,7 @@
-module Radiustar
-  require 'digest/md5'
-  require 'ipaddr_extensions'
+require "digest/md5"
+require "ipaddr_extensions"
 
+module Radiustar
   class Packet
     CODES = {
       'Access-Request' => 1,

@@ -1,3 +1,4 @@
+require "pathname"
 require "simplecov"
 
 SimpleCov.start do
@@ -9,17 +10,7 @@ require "radiustar"
 require "minitest/autorun"
 require "minitest/reporters"
 require "pry"
-# require "webmock/minitest"
-# require "vcr"
-# require "minitest-vcr"
+
+Dir[Pathname.new(Dir.pwd).join("test/support/**/*.rb")].each { |f| require f }
 
 Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
-
-# WebMock.disable_net_connect!(allow_localhost: true)
-
-# VCR.configure do |config|
-#   config.cassette_library_dir = "test/fixtures/vcr_cassettes"
-#   config.hook_into :webmock
-# end
-
-# MinitestVcr::Spec.configure!

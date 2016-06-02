@@ -1,22 +1,31 @@
-module Radiustar
-  require 'socket'
+require "socket"
+# require "pry"
 
+module Radiustar
   class Request
+    ACCOUNT_ACTIONS = { start: "Start", update: "Interim-Update", stop: "Stop" }.freeze
+
+    alias_method :inspect, :to_s
+
+    attr_reader :port, :nas_ip, :nas_identifier, :reply_timeout, :retries_number, :socket
+
     def initialize(server, options = {})
+      options = default_options.merge(options)
       @host, @port = server.split(":")
       set_port
 
-      @dict = options[:dict].nil? ? Dictionary.default : options[:dict]
+      @dict = options.fetch(:dict)
+      @secret = options.fetch(:secret)
       @nas_ip = options[:nas_ip] || get_my_ip(@host)
       @nas_identifier = options[:nas_identifier] || @nas_ip
-      @reply_timeout = options[:reply_timeout].nil? ? 60 : options[:reply_timeout].to_i
-      @retries_number = options[:retries_number].nil? ? 1 : options[:retries_number].to_i
+      @reply_timeout = options[:reply_timeout]
+      @retries_number = options[:retries_number]
 
-      @socket = UDPSocket.open
+      @socket = options[:socket] || UDPSocket.open
       @socket.connect(@host, @port)
     end
 
-    def authenticate(name, password, secret, user_attributes = {})
+    def authenticate(name, password, user_attributes = {})
       packet_attributes = {
         'User-Name' => name,
         'NAS-Identifier' => @nas_identifier,
@@ -27,7 +36,7 @@ module Radiustar
       @packet.gen_auth_authenticator
       @packet.code = 'Access-Request'
       @packet.set_attributes packet_attributes
-      @packet.set_encoded_attribute('User-Password', password, secret)
+      @packet.set_encoded_attribute('User-Password', password, @secret)
 
       send_packet
 
@@ -35,7 +44,7 @@ module Radiustar
       reply.merge @received_packet.attributes
     end
 
-    def authenticate_chap(name, password, secret, user_attributes = {})
+    def authenticate_chap(name, password, user_attributes = {})
       packet_attributes = {
         'User-Name' => name,
         'NAS-Identifier' => @nas_identifier,
@@ -54,7 +63,7 @@ module Radiustar
       reply.merge @received_packet.attributes
     end
 
-    def accounting_request(status_type, name, secret, sessionid, user_attributes = {})
+    def accounting_request(status_type, name, sessionid, user_attributes = {})
       packet_attributes = {
         'User-Name' => name,
         'NAS-Identifier' => @nas_identifier,
@@ -68,12 +77,12 @@ module Radiustar
       @packet.code = 'Accounting-Request'
       @packet.set_attributes packet_attributes
 
-      @packet.gen_acct_authenticator(secret)
+      @packet.gen_acct_authenticator(@secret)
 
       send_packet
     end
 
-    def generic_request(code, secret, user_attributes = {})
+    def generic_request(code, user_attributes = {})
       packet_attributes = {
         'NAS-Identifier' => @nas_identifier,
         'NAS-IP-Address' => @nas_ip
@@ -83,36 +92,28 @@ module Radiustar
       @packet.code = code
       @packet.set_attributes packet_attributes
 
-      @packet.gen_acct_authenticator(secret)
+      @packet.gen_acct_authenticator(@secret)
 
       send_packet
     end
 
-    def coa_request(secret, user_attributes = {})
-      generic_request('CoA-Request', secret, user_attributes)
+    def coa_request(user_attributes = {})
+      generic_request('CoA-Request', user_attributes)
     end
 
-    def disconnect_request(secret, user_attributes = {})
-      generic_request('Disconnect-Request', secret, user_attributes)
+    def disconnect(user_attributes = {})
+      generic_request('Disconnect-Request', user_attributes)
     end
 
-    def accounting_start(name, secret, sessionid, options = {})
-      accounting_request('Start', name, secret, sessionid, options)
-    end
-
-    def accounting_update(name, secret, sessionid, options = {})
-      accounting_request('Interim-Update', name, secret, sessionid, options)
-    end
-
-    def accounting_stop(name, secret, sessionid, options = {})
-      accounting_request('Stop', name, secret, sessionid, options)
-    end
-
-    def inspect
-      to_s
+    def accounting(action, name, sessionid, options = {})
+      accounting_request(ACCOUNT_ACTIONS[action], name, sessionid, options)
     end
 
     private
+
+    def default_options
+      { reply_timeout: 60, retries_number: 1 }
+    end
 
     def set_port
       @port ||= Socket.getservbyname("radius", "udp")
@@ -126,7 +127,7 @@ module Radiustar
       begin
         data = @packet.pack
         @socket.send(data, 0)
-        @received_packet = recv_packet(@reply_timeout)
+        @received_packet = recv_packet
       rescue Exception => e
         retry if (retries -= 1) > 0
         raise
@@ -135,15 +136,15 @@ module Radiustar
       return true
     end
 
-    def recv_packet(timeout)
-      if select([@socket], nil, nil, timeout.to_i) == nil
+    def recv_packet
+      if select([@socket], nil, nil, @reply_timeout) == nil
         raise "Timed out waiting for response packet from server"
       end
       data = @socket.recvfrom(4096) # rfc2865 max packet length
       Packet.new(@dict, Process.pid & 0xff, data[0])
     end
 
-    #looks up the source IP address with a route to the specified destination
+    # looks up the source IP address with a route to the specified destination
     def get_my_ip(dest_address)
       orig_reverse_lookup_setting = Socket.do_not_reverse_lookup
       Socket.do_not_reverse_lookup = true

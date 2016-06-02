@@ -1,5 +1,9 @@
+require "pry"
+
 module Radiustar
-  class Dictionary
+  class Dictionary    
+    alias_method :inspect, :to_s
+
     def initialize(initial_path)
       @attributes = AttributesCollection.new
       @vendors = VendorCollection.new
@@ -9,8 +13,7 @@ module Radiustar
 
     def read_files(path)
       dict_files = File.join(path, "*")
-      Dir.glob(dict_files) { |file| read_attributes(file) }
-      Dir.glob(dict_files) { |file| read_values(file) }
+      Dir.glob(dict_files) { |file| read_data(file) }
     end
 
     def find_attribute_by_name(name)
@@ -31,7 +34,7 @@ module Radiustar
 
     protected
 
-    def read_attributes(path)
+    def read_data(path)
       file = File.open(path) do |f|
         current_vendor = nil
         f.each_line do |line|
@@ -41,25 +44,6 @@ module Radiustar
           case split_line.first.upcase
           when "ATTRIBUTE"
             current_vendor.nil? ? set_attr(split_line) : set_vendor_attr(current_vendor, split_line)
-          when "VENDOR"
-            add_vendor(split_line)
-          when "BEGIN-VENDOR"
-            current_vendor = set_vendor(split_line)
-          when "END-VENDOR"
-            current_vendor = nil
-          end
-        end
-      end
-    end
-
-    def read_values(path)
-      file = File.open(path) do |f|
-        current_vendor = nil
-        f.each_line do |line|
-          next if line =~ /^\#/	# discard comments
-          split_line = line.split(/\s+/)
-          next if split_line == []
-          case split_line.first.upcase
           when "VALUE"
             if current_vendor.nil?
               set_value(split_line)
@@ -70,6 +54,8 @@ module Radiustar
                 set_value(split_line)
               end
             end
+          when "VENDOR"
+            add_vendor(split_line)
           when "BEGIN-VENDOR"
             current_vendor = set_vendor(split_line)
           when "END-VENDOR"
@@ -86,7 +72,11 @@ module Radiustar
     end
 
     def set_value(line)
-      @attributes.find_by_name(line[1]).add_value(line[2], line[3])
+      attr = @attributes.find_by_name(line[1])
+
+      return unless attr
+
+      attr.add_value(line[2], line[3])
     end
 
     def add_vendor(line)
@@ -102,7 +92,11 @@ module Radiustar
     end
 
     def set_vendor_value(vendor, line)
-      vendor.find_attribute_by_name(line[1]).add_value(line[2], line[3])
+      attr = vendor.find_attribute_by_name(line[1])
+
+      return unless attr
+
+      attr.add_value(line[2], line[3])
     end
   end
 end
