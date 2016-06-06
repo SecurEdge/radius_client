@@ -1,4 +1,4 @@
-module Radiustar
+module RadiusClient
   class Packet
     CODES = {
       "Access-Request" => 1,

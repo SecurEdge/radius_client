@@ -1,17 +1,17 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'radiustar/version'
+require 'radius_client/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'radiustar'
-  spec.version       = Radiustar::VERSION
-  spec.authors       = %w(PJ\ Davis Slava\ Kisel)
+  spec.name          = 'radius_client'
+  spec.version       = RadiusClient::VERSION
+  spec.authors       = %w(Slava\ Kisel)
   spec.email         = %w(slava.kisel@flatstack.com)
 
   spec.summary       = 'Ruby wrapper for freeradius server'
   spec.description   = 'Ruby wrapper for freeradius server'
-  spec.license       = 'CC0 1.0 Universal'
+  spec.license       = 'Copyright 2016 Flatstack'
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.
@@ -27,12 +27,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = %w(lib)
 
   spec.add_development_dependency 'bundler', '~> 1.10'
-  spec.add_development_dependency 'minitest-vcr', '~> 1.4.0'
   spec.add_development_dependency 'minitest'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'vcr', '~> 3.0.1'
-  spec.add_development_dependency 'webmock', '~> 1.24.1'
   spec.add_development_dependency 'simplecov', '~> 0.11.2'
   spec.add_development_dependency 'minitest-reporters', '1.1.9'
 

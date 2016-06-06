@@ -1,12 +1,12 @@
-module Radiustar
-  class VendorCollection < Array
+module RadiusClient
+  class ValuesCollection < Array
     def initialize
       @collection = {}
-      @revcollection = []
+      @revcollection = {}
     end
 
-    def add(id, name)
-      @collection[name] ||= Vendor.new(name, id)
+    def add(name, id)
+      @collection[name] ||= Value.new(name, id)
       @revcollection[id.to_i] ||= @collection[name]
       self << @collection[name]
     end
@@ -16,7 +16,11 @@ module Radiustar
     end
 
     def find_by_id(id)
-      @revcollection[id.to_i]
+      @revcollection[id]
+    end
+
+    def empty?
+      @collection.empty?
     end
   end
 end

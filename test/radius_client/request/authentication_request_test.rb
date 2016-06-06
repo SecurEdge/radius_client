@@ -1,8 +1,8 @@
 require "test_helper"
 
-describe Radiustar::Request do
+describe RadiusClient::Request do
   def new_request(socket)
-    Radiustar::Request.new("127.0.0.1:1812", { dict: DICT, secret: "testing123", socket: socket })
+    RadiusClient::Request.new("127.0.0.1:1812", { dict: DICT, secret: "testing123", socket: socket })
   end
 
   def access_accept_response

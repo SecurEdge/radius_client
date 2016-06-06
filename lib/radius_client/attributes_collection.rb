@@ -1,4 +1,4 @@
-module Radiustar
+module RadiusClient
   class AttributesCollection < Array
     attr_accessor :vendor
 

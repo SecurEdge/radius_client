@@ -1,4 +1,4 @@
-module Radiustar
+module RadiusClient
   class Value
     attr_accessor :name, :id
 

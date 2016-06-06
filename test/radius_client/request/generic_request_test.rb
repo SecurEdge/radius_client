@@ -1,10 +1,10 @@
 require "test_helper"
 
-describe Radiustar::Request do
-  DICT = Radiustar::Dictionary.new('templates')
+describe RadiusClient::Request do
+  DICT = RadiusClient::Dictionary.new('templates')
 
   def new_request(socket = nil)
-    Radiustar::Request.new("127.0.0.1:1812", { dict: DICT, secret: "testing123", socket: socket })
+    RadiusClient::Request.new("127.0.0.1:1812", { dict: DICT, secret: "testing123", socket: socket })
   end
 
   def generic_response

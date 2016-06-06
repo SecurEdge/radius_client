@@ -1,4 +1,4 @@
-module Radiustar
+module RadiusClient
   class Request
     ACCOUNT_ACTIONS = { start: "Start", update: "Interim-Update", stop: "Stop" }.freeze
 

@@ -1,4 +1,4 @@
-module Radiustar
+module RadiusClient
   class Dictionary
     alias_method :inspect, :to_s
 

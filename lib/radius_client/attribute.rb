@@ -1,4 +1,4 @@
-module Radiustar
+module RadiusClient
   class Attribute
     attr_reader :name, :id, :type, :vendor
 

@@ -1,3 +1,7 @@
+© 2016 Flatstack
+
+Based on [radiustar](https://github.com/pjdavis/radiustar).
+
 #### DESCRIPTION:
 
 Ruby Radius Server Library
@@ -11,13 +15,11 @@ Ruby Radius Server Library
 #### SYNOPSIS:
 
 ```ruby
-
-require 'rubygems'
-require 'radiustar'
+require 'radius_client'
 
 # Load dictionaries from freeradius directory
 # NOTICE: here the Dictionary.new() only accept a parameter of "folder name" but not the dictionary file
-dict = Radiustar::Dictionary.new('/usr/share/local/freeradius/')
+dict = RadiusClient::Dictionary.new('/usr/share/local/freeradius/')
 
 # Lets get authenticated
 auth_custom_attr = {
@@ -28,11 +30,11 @@ auth_custom_attr = {
 secret = 'testing123'
 request_options = { dict: dict, secret: secret }
 
-req = Radiustar::Request.new('127.0.0.1:1812', request_options)
+req = RadiusClient::Request.new('127.0.0.1:1812', request_options)
 reply = req.authenticate('testing', 'password', auth_custom_attr)
 
 if reply[:code] == 'Access-Accept'
-  req = Radiustar::Request.new('127.0.0.1:1813', request_options)
+  req = RadiusClient::Request.new('127.0.0.1:1813', request_options)
 
   acct_custom_attr = {
     'Framed-Address'    => '127.0.0.1',
@@ -60,17 +62,11 @@ end
 
 #### INSTALL:
 
-`gem install radiustar`
+`gem install radius_client`
+
+or in `Gemfile`:
+`gem "radius_client", git: "https://github.com/slavakisel/radius_client"`
 
 #### DEVELOPMENT:
 
 After cloning the project install gems with `bundle`. Run `rake test` to check tests.
-
-#### Thanks:
-
-Thanks to everyone who has contributed to this project.
-Without your help and support, this would not have been possible.
-
-#### LICENSE:
-
-Originally released under the CC0 1.0 Universal license by [PJ Davis](https://github.com/pjdavis) in 2010.

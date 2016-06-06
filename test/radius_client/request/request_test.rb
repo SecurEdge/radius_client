@@ -1,7 +1,7 @@
 require "test_helper"
 
-describe Radiustar::Request do
-  DICT = Radiustar::Dictionary.new('templates')
+describe RadiusClient::Request do
+  DICT = RadiusClient::Dictionary.new("templates")
 
   REQUEST_OPTIONS = {
     nas_ip: "192.168.1.1",
@@ -11,7 +11,7 @@ describe Radiustar::Request do
   }.freeze
 
   def new_request(socket = nil)
-    Radiustar::Request.new("127.0.0.1:1812", REQUEST_OPTIONS.merge(socket: socket))
+    RadiusClient::Request.new("127.0.0.1:1812", REQUEST_OPTIONS.merge(socket: socket))
   end
 
   it "correctly initializes attributes" do
@@ -25,7 +25,7 @@ describe Radiustar::Request do
   end
 
   it "detects ip address by host" do
-    request = Radiustar::Request.new("127.0.0.1:1812", { secret: "asdf", dict: DICT})
+    request = RadiusClient::Request.new("127.0.0.1:1812", secret: "asdf", dict: DICT)
     request.nas_ip.must_equal "127.0.0.1"
   end
 end
