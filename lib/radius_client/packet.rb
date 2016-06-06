@@ -30,7 +30,7 @@ module RadiusClient
       unset_all_attributes
       if data
         @packed = data
-        self.unpack
+        unpack
       end
       self
     end
@@ -38,13 +38,13 @@ module RadiusClient
     # Generate an authenticator. It will try to use /dev/urandom if
     # possible, or the system rand call if that"s not available.
     def gen_auth_authenticator
-      if (File.exist?("/dev/urandom"))
+      if File.exist?("/dev/urandom")
         File.open("/dev/urandom") do |urandom|
           @authenticator = urandom.read(16)
         end
       else
         @authenticator = []
-        8.times { @authenticator << rand(65536) }
+        8.times { @authenticator << rand(65_536) }
         @authenticator = @authenticator.pack("n8")
       end
     end
@@ -69,7 +69,7 @@ module RadiusClient
       #       Access-Request, because there is no User-Password attribute in an
       #       Accounting-Request.
       #
-      @authenticator = "\000"*16
+      @authenticator = "\000" * 16
       @authenticator = Digest::MD5.digest(pack + secret)
       @packed = nil
       @authenticator
@@ -134,7 +134,7 @@ module RadiusClient
       return unless @attributes[name]
 
       if @attributes[name].is_a?(Array)
-        @attributes[name].map{ |a| decode(a.value.to_s, secret) }
+        @attributes[name].map { |a| decode(a.value.to_s, secret) }
       else
         decode(@attributes[name].value.to_s, secret)
       end
@@ -162,20 +162,20 @@ module RadiusClient
 
     def unpack
       @code, @id, len, @authenticator, attribute_data = @packed.unpack(PACK_HEADER)
-      raise "Incomplete Packet(read #{@packed.length} != #{len})" if @packed.length != len
+      fail "Incomplete Packet(read #{@packed.length} != #{len})" if @packed.length != len
 
       @code = CODES.key(@code)
       vendor = nil
 
       unset_all_attributes
 
-      while attribute_data.length > 0 do
+      while attribute_data.length > 0
         length = attribute_data.unpack("xC").first.to_i
-        attribute_type, attribute_value = attribute_data.unpack("Cxa#{length-2}")
+        attribute_type, attribute_value = attribute_data.unpack("Cxa#{length - 2}")
         attribute_type = attribute_type.to_i
 
         if attribute_type == 26 # Vendor Specific Attribute
-          vid, attribute_type, attribute_value = attribute_data.unpack("xxNCxa#{length-8}")
+          vid, attribute_type, attribute_value = attribute_data.unpack("xxNCxa#{length - 8}")
           vendor =  @dict.vendors.find_by_id(vid)
           attribute = vendor.find_attribute_by_id(attribute_type) if vendor
         else
@@ -192,11 +192,11 @@ module RadiusClient
                             when "ipaddr"
                               attribute_value.unpack("N")[0].to_ip.to_s
                             when "ipv6addr"
-                              a=attribute_value.unpack("NNNN")
-                              ((a[0]<<96)+(a[1]<<64)+(a[2]<<32)+a[3]).to_ip.to_s
+                              a = attribute_value.unpack("NNNN")
+                              ((a[0] << 96) + (a[1] << 64) + (a[2] << 32) + a[3]).to_ip.to_s
                             when "ipv6prefix"
-                              a=attribute_value.unpack("CCNNNN")
-                              ((a[2]<<96)+(a[3]<<64)+(a[4]<<32)+a[5]).to_ip.to_s+"/#{a[1]}"
+                              a = attribute_value.unpack("CCNNNN")
+                              ((a[2] << 96) + (a[3] << 64) + (a[4] << 32) + a[5]).to_ip.to_s + "/#{a[1]}"
                             when "time"
                               attribute_value.unpack("N")[0]
                             when "date"
@@ -204,7 +204,7 @@ module RadiusClient
                             end
 
           if vendor
-            set_attribute(vendor.name+"/"+attribute.name, attribute_value) if attribute
+            set_attribute(vendor.name + "/" + attribute.name, attribute_value) if attribute
           else
             set_attribute(attribute.name, attribute_value) if attribute
           end
@@ -218,7 +218,7 @@ module RadiusClient
       bstr1 = str1.unpack("C*")
       bstr2 = str2.unpack("C*")
 
-      bstr1.zip(bstr2).map {|b1, b2| b1 ^ b2}.pack("C*")
+      bstr1.zip(bstr2).map { |b1, b2| b1 ^ b2 }.pack("C*")
     end
 
     def encode(value, secret)
@@ -226,9 +226,9 @@ module RadiusClient
       encoded_value = ""
 
       # pad to 16n bytes
-      value += "\000" * (15-(15 + value.length) % 16)
-      0.step(value.length-1, 16) do |i|
-        lastround = xor_str(value[i, 16], Digest::MD5.digest(secret + lastround) )
+      value += "\000" * (15 - (15 + value.length) % 16)
+      0.step(value.length - 1, 16) do |i|
+        lastround = xor_str(value[i, 16], Digest::MD5.digest(secret + lastround))
         encoded_value += lastround
       end
 
@@ -238,14 +238,14 @@ module RadiusClient
     def decode(value, secret)
       decoded_value = ""
       lastround = @authenticator
-      0.step(value.length-1, 16) do |i|
-              decoded_value += xor_str(value[i, 16], Digest::MD5.digest(secret + lastround))
-              lastround = value[i, 16]
+      0.step(value.length - 1, 16) do |i|
+        decoded_value += xor_str(value[i, 16], Digest::MD5.digest(secret + lastround))
+        lastround = value[i, 16]
       end
 
       decoded_value.gsub!(/\000+/, "") if decoded_value
       decoded_value[value.length, -1] = "" unless (decoded_value.length <= value.length)
-      return decoded_value
+      decoded_value
     end
 
     class Attribute
@@ -266,7 +266,7 @@ module RadiusClient
 
       def pack
         attribute = define_pack_attribute
-        raise "Undefined attribute \"#{@name}\"." if attribute.nil?
+        fail "Undefined attribute \"#{@name}\"." if attribute.nil?
 
         if vendor?
           pack_vendor_specific_attribute(attribute)
@@ -279,7 +279,7 @@ module RadiusClient
 
       # This is the cheapest and easiest way to add VSA"s!
       def add_vsa(name)
-        if (name && (chunks = name.split("/")) && (chunks.size == 2))
+        if name && (chunks = name.split("/")) && (chunks.size == 2)
           @vendor = chunks[0]
           @name = chunks[1]
         else
@@ -298,8 +298,8 @@ module RadiusClient
       def pack_vendor_specific_attribute(attribute)
         inside_attribute = pack_attribute attribute
         vid = attribute.vendor.id.to_i
-        header = [ 26, inside_attribute.size + 6 ].pack("CC") # 26: Type = Vendor-Specific, 4: length of Vendor-Id field
-        header += [ 0, vid >> 16, vid >> 8, vid ].pack("CCCC") # first byte of Vendor-Id is 0
+        header = [26, inside_attribute.size + 6].pack("CC") # 26: Type = Vendor-Specific, 4: length of Vendor-Id field
+        header += [0, vid >> 16, vid >> 8, vid].pack("CCCC") # first byte of Vendor-Id is 0
         header + inside_attribute
       end
 
@@ -320,17 +320,17 @@ module RadiusClient
         when "string", "octets"
           @value
         when "integer"
-          raise "Invalid value name \"#{@value}\"." if attribute.has_values? && attribute.find_values_by_name(@value).nil?
+          fail "Invalid value name \"#{@value}\"." if attribute.has_values? && attribute.find_values_by_name(@value).nil?
           [attribute.has_values? ? attribute.find_values_by_name(@value).id : @value].pack("N")
         when "ipaddr"
           [@value.to_ip.to_i].pack("N")
         when "ipv6addr"
           ipi = @value.to_ip.to_i
-          [ ipi >> 96, ipi >> 64, ipi >> 32, ipi ].pack("NNNN")
+          [ipi >> 96, ipi >> 64, ipi >> 32, ipi].pack("NNNN")
         when "ipv6prefix"
           ipi = @value.to_ip.to_i
           mask = @value.to_ip.length
-          [ 0, mask, ipi >> 96, ipi >> 64, ipi >> 32, ipi ].pack("CCNNNN")
+          [0, mask, ipi >> 96, ipi >> 64, ipi >> 32, ipi].pack("CCNNNN")
         when "date"
           [@value].pack("N")
         when "time"

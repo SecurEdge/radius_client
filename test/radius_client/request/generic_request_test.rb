@@ -1,10 +1,8 @@
 require "test_helper"
 
 describe RadiusClient::Request do
-  DICT = RadiusClient::Dictionary.new('templates')
-
   def new_request(socket = nil)
-    RadiusClient::Request.new("127.0.0.1:1812", { dict: DICT, secret: "testing123", socket: socket })
+    RadiusClient::Request.new("127.0.0.1:1812", dict: DICT, secret: "testing123", socket: socket)
   end
 
   def generic_response
@@ -19,7 +17,7 @@ describe RadiusClient::Request do
     request = new_request(req_socket)
 
     req_socket.stub :recvfrom, generic_response do
-      assert request.generic_request('Disconnect-Request')
+      assert request.generic_request("Disconnect-Request")
     end
   end
 

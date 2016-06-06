@@ -24,16 +24,16 @@ module RadiusClient
 
     def authenticate(name, password, user_attributes = {})
       packet_attributes = {
-        'User-Name' => name,
-        'NAS-Identifier' => @nas_identifier,
-        'NAS-IP-Address' => @nas_ip
+        "User-Name" => name,
+        "NAS-Identifier" => @nas_identifier,
+        "NAS-IP-Address" => @nas_ip
       }.merge(user_attributes)
 
       @packet = Packet.new(@dict, Process.pid & 0xff)
       @packet.gen_auth_authenticator
-      @packet.code = 'Access-Request'
+      @packet.code = "Access-Request"
       @packet.set_attributes packet_attributes
-      @packet.set_encoded_attribute('User-Password', password, @secret)
+      @packet.set_encoded_attribute("User-Password", password, @secret)
 
       send_packet
 
@@ -43,15 +43,15 @@ module RadiusClient
 
     def authenticate_chap(name, password, user_attributes = {})
       packet_attributes = {
-        'User-Name' => name,
-        'NAS-Identifier' => @nas_identifier,
-        'NAS-IP-Address' => @nas_ip,
-        'CHAP-Password' => password
+        "User-Name" => name,
+        "NAS-Identifier" => @nas_identifier,
+        "NAS-IP-Address" => @nas_ip,
+        "CHAP-Password" => password
       }.merge(user_attributes)
 
       @packet = Packet.new(@dict, Process.pid & 0xff)
       @packet.gen_auth_authenticator
-      @packet.code = 'Access-Request'
+      @packet.code = "Access-Request"
       @packet.set_attributes packet_attributes
 
       send_packet
@@ -62,16 +62,16 @@ module RadiusClient
 
     def accounting_request(status_type, name, sessionid, user_attributes = {})
       packet_attributes = {
-        'User-Name' => name,
-        'NAS-Identifier' => @nas_identifier,
-        'NAS-IP-Address' => @nas_ip,
-        'Acct-Status-Type' => status_type,
-        'Acct-Session-Id' => sessionid,
-        'Acct-Authentic' => 'RADIUS'
+        "User-Name" => name,
+        "NAS-Identifier" => @nas_identifier,
+        "NAS-IP-Address" => @nas_ip,
+        "Acct-Status-Type" => status_type,
+        "Acct-Session-Id" => sessionid,
+        "Acct-Authentic" => "RADIUS"
       }.merge(user_attributes)
 
       @packet = Packet.new(@dict, Process.pid & 0xff)
-      @packet.code = 'Accounting-Request'
+      @packet.code = "Accounting-Request"
       @packet.set_attributes packet_attributes
 
       @packet.gen_acct_authenticator(@secret)
@@ -81,8 +81,8 @@ module RadiusClient
 
     def generic_request(code, user_attributes = {})
       packet_attributes = {
-        'NAS-Identifier' => @nas_identifier,
-        'NAS-IP-Address' => @nas_ip
+        "NAS-Identifier" => @nas_identifier,
+        "NAS-IP-Address" => @nas_ip
       }.merge(user_attributes)
 
       @packet = Packet.new(@dict, Process.pid & 0xff)
@@ -95,11 +95,11 @@ module RadiusClient
     end
 
     def coa_request(user_attributes = {})
-      generic_request('CoA-Request', user_attributes)
+      generic_request("CoA-Request", user_attributes)
     end
 
     def disconnect(user_attributes = {})
-      generic_request('Disconnect-Request', user_attributes)
+      generic_request("Disconnect-Request", user_attributes)
     end
 
     def accounting(action, name, sessionid, options = {})
@@ -125,16 +125,16 @@ module RadiusClient
         data = @packet.pack
         @socket.send(data, 0)
         @received_packet = recv_packet
-      rescue Exception => e
+      rescue StandardError
         retry if (retries -= 1) > 0
         raise
       end
 
-      return true
+      true
     end
 
     def recv_packet
-      if select([@socket], nil, nil, @reply_timeout) == nil
+      if select([@socket], nil, nil, @reply_timeout).nil?
         raise "Timed out waiting for response packet from server"
       end
       data = @socket.recvfrom(4096) # rfc2865 max packet length
@@ -151,7 +151,7 @@ module RadiusClient
         sock.addr.last
       end
     ensure
-       Socket.do_not_reverse_lookup = orig_reverse_lookup_setting
+      Socket.do_not_reverse_lookup = orig_reverse_lookup_setting
     end
   end
 end

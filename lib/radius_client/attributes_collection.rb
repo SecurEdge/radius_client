@@ -2,7 +2,7 @@ module RadiusClient
   class AttributesCollection < Array
     attr_accessor :vendor
 
-    def initialize vendor=nil
+    def initialize(vendor = nil)
       @collection = {}
       @revcollection = {}
       @vendor = vendor if vendor

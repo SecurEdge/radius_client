@@ -2,7 +2,7 @@ module RadiusClient
   class Attribute
     attr_reader :name, :id, :type, :vendor
 
-    def initialize(name, id, type, vendor=nil)
+    def initialize(name, id, type, vendor = nil)
       @values = ValuesCollection.new
       @name = name
       @id = id.to_i
@@ -26,9 +26,7 @@ module RadiusClient
       !@values.empty?
     end
 
-    def values
-      @values
-    end
+    attr_reader :values
 
     def vendor?
       !!@vendor

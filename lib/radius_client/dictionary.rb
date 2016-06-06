@@ -22,13 +22,9 @@ module RadiusClient
       @attributes.find_by_id(id)
     end
 
-    def vendors
-      @vendors
-    end
+    attr_reader :vendors
 
-    def attributes
-      @attributes
-    end
+    attr_reader :attributes
 
     protected
 

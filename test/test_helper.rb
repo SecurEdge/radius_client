@@ -13,4 +13,4 @@ require "pry"
 
 Dir[Pathname.new(Dir.pwd).join("test/support/**/*.rb")].each { |f| require f }
 
-Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new
+Minitest::Reporters.use!

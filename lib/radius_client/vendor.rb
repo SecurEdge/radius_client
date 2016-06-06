@@ -20,8 +20,6 @@ module RadiusClient
       @attributes.find_by_id(id.to_i)
     end
 
-    def attributes
-      @attributes
-    end
+    attr_reader :attributes
   end
 end

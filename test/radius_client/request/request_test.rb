@@ -1,8 +1,6 @@
 require "test_helper"
 
 describe RadiusClient::Request do
-  DICT = RadiusClient::Dictionary.new("templates")
-
   REQUEST_OPTIONS = {
     nas_ip: "192.168.1.1",
     nas_identifier: "aa:9e:ee:2f:8d:7d",
@@ -10,8 +8,8 @@ describe RadiusClient::Request do
     secret: "testing123"
   }.freeze
 
-  def new_request(socket = nil)
-    RadiusClient::Request.new("127.0.0.1:1812", REQUEST_OPTIONS.merge(socket: socket))
+  def new_request(options = {})
+    RadiusClient::Request.new("127.0.0.1:1812", REQUEST_OPTIONS.merge(options))
   end
 
   it "correctly initializes attributes" do
@@ -25,7 +23,7 @@ describe RadiusClient::Request do
   end
 
   it "detects ip address by host" do
-    request = RadiusClient::Request.new("127.0.0.1:1812", secret: "asdf", dict: DICT)
+    request = new_request(nas_ip: nil, nas_identifier: nil)
     request.nas_ip.must_equal "127.0.0.1"
   end
 end
