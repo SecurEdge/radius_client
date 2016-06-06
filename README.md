@@ -65,7 +65,10 @@ end
 `gem install radius_client`
 
 or in `Gemfile`:
-`gem "radius_client", git: "https://github.com/slavakisel/radius_client"`
+
+```ruby
+gem "radius_client", git: "https://github.com/slavakisel/radius_client"
+```
 
 #### DEVELOPMENT:
 
