@@ -19,7 +19,7 @@ require 'radius_client'
 
 # Load dictionaries from freeradius directory
 # NOTICE: here the Dictionary.new() only accept a parameter of "folder name" but not the dictionary file
-dict = RadiusClient::Dictionary.new('/usr/share/local/freeradius/')
+dict = RadiusClient::Dictionary.new('/usr/local/share/freeradius/')
 
 # Lets get authenticated
 auth_custom_attr = {
@@ -44,15 +44,15 @@ if reply[:code] == 'Access-Accept'
   }
 
   timings = Time.now
-  reply = req.accounting(:start, 'testing', 'password', '123456', acct_custom_attr)
+  reply = req.accounting(:start, 'testing', 'password', acct_custom_attr)
 
   sleep(rand 5)
   acct_custom_attr['Acct-Session-Time'] = Time.now - timings
-  reply = req.accounting(:update, 'testing', 'password', '123456', acct_custom_attr)
+  reply = req.accounting(:update, 'testing', 'password', acct_custom_attr)
 
   sleep(rand 5)
   acct_custom_attr['Acct-Session-Time'] = Time.now - timings
-  reply = req.accounting(:stop, 'testing', 'password', '123456', acct_custom_attr)
+  reply = req.accounting(:stop, 'testing', 'password', acct_custom_attr)
 end
 ```
 

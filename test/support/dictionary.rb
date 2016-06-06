@@ -1,1 +1,1 @@
-DICT = RadiusClient::Dictionary.new("templates").freeze
+DICT = RadiusClient::Dictionary.new("test/fixtures/freeradius").freeze
