@@ -1,7 +1,6 @@
 require "digest/md5"
 require "ipaddr_extensions"
 require "socket"
-# require "pry"
 
 module RadiusClient
   autoload :VERSION,              "radius_client/version"
@@ -9,6 +8,7 @@ module RadiusClient
   autoload :Attribute,            "radius_client/attribute"
   autoload :AttributesCollection, "radius_client/attributes_collection"
   autoload :Dictionary,           "radius_client/dictionary"
+  autoload :PacketAttribute,      "radius_client/packet_attribute"
   autoload :Packet,               "radius_client/packet"
   autoload :Request,              "radius_client/request"
   autoload :Value,                "radius_client/value"

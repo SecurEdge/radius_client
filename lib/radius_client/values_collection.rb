@@ -18,9 +18,5 @@ module RadiusClient
     def find_by_id(id)
       @revcollection[id]
     end
-
-    def empty?
-      @collection.empty?
-    end
   end
 end

@@ -6,6 +6,7 @@ AllCops:
   Exclude:
     - templates/**/*
     - tmp/**/*
+    - coverage/**/*
 
 Style/Documentation:
   Description: 'Document classes and non-namespace modules.'
