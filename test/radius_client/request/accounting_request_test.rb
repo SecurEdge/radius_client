@@ -2,7 +2,7 @@ require "test_helper"
 
 describe RadiusClient::Request do
   def new_request(socket = nil)
-    RadiusClient::Request.new("127.0.0.1:1812", dict: DICT, secret: "testing123", socket: socket)
+    RadiusClient::Request.new(socket: socket)
   end
 
   def accounting_response
@@ -10,6 +10,14 @@ describe RadiusClient::Request do
       "\x05\xB7\x00\x14\xB6\xFE\x06>\x02\xAF\x17|\x8D03,+\xF2\x1C\xBB",
       ["AF_INET", 1813, "127.0.0.1", "127.0.0.1"]
     ]
+  end
+
+  before do
+    RadiusClient.configure do |config|
+      config.host = "127.0.0.1"
+      config.dictionary_dir = "test/fixtures/freeradius"
+      config.secret = "testing123"
+    end
   end
 
   it "can send accounting_request" do

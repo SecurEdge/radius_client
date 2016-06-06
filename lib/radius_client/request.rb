@@ -6,13 +6,15 @@ module RadiusClient
 
     attr_reader :port, :nas_ip, :nas_identifier, :reply_timeout, :retries_number, :socket
 
-    def initialize(server, options = {})
+    def initialize(options = {})
       options = default_options.merge(options)
-      @host, @port = server.split(":")
+
+      @port = options[:port]
       set_port
 
-      @dict = options.fetch(:dict)
-      @secret = options.fetch(:secret)
+      @host = RadiusClient.configuration.host
+      @dict = RadiusClient.dictionary
+      @secret = RadiusClient.configuration.secret
       @nas_ip = options[:nas_ip] || get_my_ip(@host)
       @nas_identifier = options[:nas_identifier] || @nas_ip
       @reply_timeout = options[:reply_timeout]

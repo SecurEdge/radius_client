@@ -17,9 +17,11 @@ Ruby Radius Server Library
 ```ruby
 require 'radius_client'
 
-# Load dictionaries from freeradius directory
-# NOTICE: here the Dictionary.new() only accept a parameter of "folder name" but not the dictionary file
-dict = RadiusClient::Dictionary.new('/usr/local/share/freeradius/')
+RadiusClient.configure do |config|
+  config.host = "127.0.0.1"
+  config.secret = "testing123"
+  config.dictionary_dir = "/usr/local/share/freeradius"
+end
 
 # Lets get authenticated
 auth_custom_attr = {
@@ -27,14 +29,12 @@ auth_custom_attr = {
   'NAS-Port'        => 0,
   'NAS-Port-Type'   => 'Ethernet'
 }
-secret = 'testing123'
-request_options = { dict: dict, secret: secret }
 
-req = RadiusClient::Request.new('127.0.0.1:1812', request_options)
+req = RadiusClient::Request.new
 reply = req.authenticate('testing', 'password', auth_custom_attr)
 
 if reply[:code] == 'Access-Accept'
-  req = RadiusClient::Request.new('127.0.0.1:1813', request_options)
+  req = RadiusClient::Request.new(port: 1813)
 
   acct_custom_attr = {
     'Framed-Address'    => '127.0.0.1',
@@ -69,6 +69,12 @@ or in `Gemfile`:
 ```ruby
 gem "radius_client", git: "https://github.com/slavakisel/radius_client"
 ```
+
+#### CONFIGURATION:
+
+Generate rails config:
+
+`rails generate radius_client:install radius_client`
 
 #### DEVELOPMENT:
 

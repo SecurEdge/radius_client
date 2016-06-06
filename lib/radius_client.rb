@@ -28,6 +28,10 @@ module RadiusClient
     @configuration = Configuration.new
   end
 
+  def self.dictionary
+    @dictionary ||= Dictionary.new
+  end
+
   def self.configure
     yield(configuration)
   end

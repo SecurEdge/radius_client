@@ -3,13 +3,19 @@ require "test_helper"
 describe RadiusClient::Request do
   REQUEST_OPTIONS = {
     nas_ip: "192.168.1.1",
-    nas_identifier: "aa:9e:ee:2f:8d:7d",
-    dict: DICT,
-    secret: "testing123"
+    nas_identifier: "aa:9e:ee:2f:8d:7d"
   }.freeze
 
   def new_request(options = {})
-    RadiusClient::Request.new("127.0.0.1:1812", REQUEST_OPTIONS.merge(options))
+    RadiusClient::Request.new(REQUEST_OPTIONS.merge(options))
+  end
+
+  before do
+    RadiusClient.configure do |config|
+      config.host = "127.0.0.1"
+      config.dictionary_dir = "test/fixtures/freeradius"
+      config.secret = "testing123"
+    end
   end
 
   it "correctly initializes attributes" do
