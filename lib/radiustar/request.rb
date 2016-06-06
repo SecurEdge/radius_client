@@ -1,6 +1,3 @@
-require "socket"
-# require "pry"
-
 module Radiustar
   class Request
     ACCOUNT_ACTIONS = { start: "Start", update: "Interim-Update", stop: "Stop" }.freeze

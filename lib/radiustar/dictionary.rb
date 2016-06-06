@@ -1,7 +1,5 @@
-require "pry"
-
 module Radiustar
-  class Dictionary    
+  class Dictionary
     alias_method :inspect, :to_s
 
     def initialize(initial_path)
