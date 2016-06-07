@@ -5,7 +5,7 @@ SimpleCov.start do
   add_filter "test/"
 end
 
-$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+require File.expand_path('../../lib/radius_client', __FILE__)
 require "radius_client"
 require "minitest/autorun"
 require "minitest/reporters"
