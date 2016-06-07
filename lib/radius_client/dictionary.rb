@@ -2,7 +2,7 @@ module RadiusClient
   class Dictionary
     alias_method :inspect, :to_s
 
-    def initialize(initial_path)
+    def initialize(initial_path = RadiusClient.configuration.dictionary_dir)
       @attributes = AttributesCollection.new
       @vendors = VendorCollection.new
 

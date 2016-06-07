@@ -5,15 +5,11 @@ module RadiusClient
     def initialize(vendor = nil)
       @collection = {}
       @revcollection = {}
-      @vendor = vendor if vendor
+      @vendor = vendor
     end
 
     def add(name, id, type)
-      if vendor?
-        @collection[name] ||= Attribute.new(name, id.to_i, type, @vendor)
-      else
-        @collection[name] ||= Attribute.new(name, id.to_i, type)
-      end
+      @collection[name] ||= Attribute.new(name, id.to_i, type, @vendor)
       @revcollection[id.to_i] ||= @collection[name]
       self << @collection[name]
     end
