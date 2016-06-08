@@ -5,11 +5,10 @@ module RadiusClient
     attr_reader :dict, :name, :vendor
     attr_accessor :value
 
-    def initialize(dict, name, value, vendor = nil)
+    def initialize(dict, name, value)
       add_vsa(name)
 
       @dict = dict
-      @vendor ||= vendor
       @value = value.is_a?(PacketAttribute) ? value.to_s : value
     end
 

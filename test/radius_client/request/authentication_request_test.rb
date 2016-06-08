@@ -23,9 +23,10 @@ describe RadiusClient::Request do
   it "can authenticate user" do
     req_socket = UDPSocket.open
     request = new_request(req_socket)
+    auth_opts = { "Aruba/Aruba-User-Role" => "guest" }
 
     req_socket.stub :recvfrom, access_accept_response do
-      request.authenticate("testing", "password").must_equal(code: "Access-Accept")
+      request.authenticate("testing", "password", auth_opts).must_equal(code: "Access-Accept")
     end
   end
 
