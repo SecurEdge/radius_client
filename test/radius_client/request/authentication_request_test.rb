@@ -26,7 +26,8 @@ describe RadiusClient::Request do
     auth_opts = { "Aruba/Aruba-User-Role" => "guest" }
 
     req_socket.stub :recvfrom, access_accept_response do
-      request.authenticate("testing", "password", auth_opts).must_equal(code: "Access-Accept")
+      reply = request.authenticate("testing", "password", auth_opts)
+      assert reply.success?
     end
   end
 
@@ -35,7 +36,8 @@ describe RadiusClient::Request do
     request = new_request(req_socket)
 
     req_socket.stub :recvfrom, access_accept_response do
-      request.authenticate_chap("testing", "password").must_equal(code: "Access-Accept")
+      reply = request.authenticate("testing", "password")
+      assert reply.success?
     end
   end
 end

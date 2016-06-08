@@ -1,53 +1,37 @@
 PATH
   remote: .
   specs:
-    radiustar (0.0.9)
+    radius_client (0.1.0)
       ipaddr_extensions (= 1.0.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.4.0)
     ansi (1.5.0)
     builder (3.2.2)
     coderay (1.1.1)
-    crack (0.4.3)
-      safe_yaml (~> 1.0.0)
     docile (1.1.5)
-    hashdiff (0.3.0)
     ipaddr_extensions (1.0.2)
     json (1.8.3)
     method_source (0.8.2)
-    minispec-metadata (2.0.0)
-      minitest
     minitest (5.9.0)
     minitest-reporters (1.1.9)
       ansi
       builder
       minitest (>= 5.0)
       ruby-progressbar
-    minitest-vcr (1.4.0)
-      minispec-metadata (~> 2.0)
-      minitest (>= 4.7.5)
-      vcr (>= 2.9)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rake (10.5.0)
     ruby-progressbar (1.8.1)
-    safe_yaml (1.0.4)
     simplecov (0.11.2)
       docile (~> 1.1.0)
       json (~> 1.8)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
     slop (3.6.0)
-    vcr (3.0.3)
-    webmock (1.24.6)
-      addressable (>= 2.3.6)
-      crack (>= 0.3.2)
-      hashdiff
 
 PLATFORMS
   ruby
@@ -56,13 +40,10 @@ DEPENDENCIES
   bundler (~> 1.10)
   minitest
   minitest-reporters (= 1.1.9)
-  minitest-vcr (~> 1.4.0)
   pry
-  radiustar!
+  radius_client!
   rake (~> 10.0)
   simplecov (~> 0.11.2)
-  vcr (~> 3.0.1)
-  webmock (~> 1.24.1)
 
 BUNDLED WITH
    1.11.2

@@ -38,7 +38,7 @@ describe RadiusClient::Request do
           assert_equal RadiusClient::Request::ACCOUNT_ACTIONS[action], call_action
           assert_equal "test", name
           assert_equal 1, sessionid
-          assert_equal ({}), options
+          assert_equal({}, options)
           mock
         end
 

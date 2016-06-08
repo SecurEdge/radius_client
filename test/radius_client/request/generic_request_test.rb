@@ -35,7 +35,7 @@ describe RadiusClient::Request do
 
       call_arguments = lambda do |code, options|
         assert_equal "CoA-Request", code
-        assert_equal ({}), options
+        assert_equal({}, options)
         mock
       end
 
@@ -53,7 +53,7 @@ describe RadiusClient::Request do
 
       call_arguments = lambda do |code, options|
         assert_equal "Disconnect-Request", code
-        assert_equal ({}), options
+        assert_equal({}, options)
         mock
       end
 

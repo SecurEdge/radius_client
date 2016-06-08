@@ -8,6 +8,9 @@ module RadiusClient
   autoload :Attribute,            "radius_client/attribute"
   autoload :AttributesCollection, "radius_client/attributes_collection"
   autoload :Dictionary,           "radius_client/dictionary"
+  autoload :Reply,                "radius_client/reply"
+  autoload :User,                 "radius_client/user"
+  autoload :Session,              "radius_client/session"
   autoload :PacketAttribute,      "radius_client/packet_attribute"
   autoload :Packet,               "radius_client/packet"
   autoload :Request,              "radius_client/request"
@@ -18,21 +21,21 @@ module RadiusClient
 
   class << self
     attr_accessor :configuration
-  end
 
-  def self.configuration
-    @configuration ||= Configuration.new
-  end
+    def configuration
+      @configuration ||= Configuration.new
+    end
 
-  def self.reset!
-    @configuration = Configuration.new
-  end
+    def reset!
+      @configuration = Configuration.new
+    end
 
-  def self.dictionary
-    @dictionary ||= Dictionary.new
-  end
+    def dictionary
+      @dictionary ||= Dictionary.new
+    end
 
-  def self.configure
-    yield(configuration)
+    def configure
+      yield(configuration)
+    end
   end
 end

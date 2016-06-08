@@ -38,9 +38,7 @@ module RadiusClient
       @packet.set_encoded_attribute("User-Password", password, @secret)
 
       send_packet
-
-      reply = { code: @received_packet.code }
-      reply.merge @received_packet.attributes
+      compose_reply
     end
 
     def authenticate_chap(name, password, user_attributes = {})
@@ -57,9 +55,7 @@ module RadiusClient
       @packet.set_attributes packet_attributes
 
       send_packet
-
-      reply = { code: @received_packet.code }
-      reply.merge @received_packet.attributes
+      compose_reply
     end
 
     def accounting_request(status_type, name, sessionid, user_attributes = {})
@@ -79,6 +75,7 @@ module RadiusClient
       @packet.gen_acct_authenticator(@secret)
 
       send_packet
+      compose_reply
     end
 
     def generic_request(code, user_attributes = {})
@@ -94,6 +91,7 @@ module RadiusClient
       @packet.gen_acct_authenticator(@secret)
 
       send_packet
+      compose_reply
     end
 
     def coa_request(user_attributes = {})
@@ -154,6 +152,10 @@ module RadiusClient
       end
     ensure
       Socket.do_not_reverse_lookup = orig_reverse_lookup_setting
+    end
+
+    def compose_reply
+      Reply.new(@received_packet.attributes.merge(code: @received_packet.code))
     end
   end
 end
