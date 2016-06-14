@@ -1,10 +1,8 @@
-© 2016 Flatstack
-
 Based on [radiustar](https://github.com/pjdavis/radiustar).
 
 #### DESCRIPTION:
 
-Ruby Radius Server Library
+Ruby Library for interacting with (freeradius server)[http://freeradius.org/]
 
 #### FEATURES
 
@@ -59,6 +57,7 @@ end
 #### REQUIREMENTS:
 
 * Ruby >=2.2.3
+* Freeradius >= 3.0.1
 
 #### INSTALL:
 
@@ -67,7 +66,7 @@ end
 or in `Gemfile`:
 
 ```ruby
-gem "radius_client", git: "https://github.com/slavakisel/radius_client"
+gem "radius_client", git: "https://github.com/fs/radius_client"
 ```
 
 #### CONFIGURATION:
