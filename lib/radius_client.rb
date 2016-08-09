@@ -1,6 +1,7 @@
 require "digest/md5"
 require "ipaddr_extensions"
 require "socket"
+require "pg"
 
 module RadiusClient
   autoload :VERSION,              "radius_client/version"
