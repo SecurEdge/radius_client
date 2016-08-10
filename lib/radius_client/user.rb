@@ -5,6 +5,12 @@ module RadiusClient
         conn.exec("SELECT * FROM radcheck").map { |row| row }
       end
 
+      def update_by_username(username, attrs = {})
+        fields = attrs.keys.map.with_index(1) { |attr, i| "#{attr} = $#{i}" }.join(", ")
+        conn.prepare("update_user", "UPDATE radcheck SET #{fields} WHERE username = '#{username}'")
+        conn.exec_prepared("update_user", attrs.values)
+      end
+
       def sign_up(name, password, options = {})
         conn.prepare("new_user", "INSERT INTO radcheck (username, attribute, op, value) values ($1, $2, $3, $4)")
         conn.exec_prepared("new_user", [name, "Cleartext-Password", ":=", password])
