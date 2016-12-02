@@ -40,7 +40,7 @@ module RadiusClient
       end
 
       def filter(string)
-        string.tr("^A-Za-z0-9", "")
+        string.tr("^A-Za-z0-9.", "")
       end
     end
   end
