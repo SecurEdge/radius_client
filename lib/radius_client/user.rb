@@ -22,7 +22,7 @@ module RadiusClient
         end
       end
 
-      def delete
+      def delete(name)
         conn.exec(
           "DELETE from radcheck where username='#{name}'"
         )
