@@ -22,6 +22,12 @@ module RadiusClient
         end
       end
 
+      def delete
+        conn.exec(
+          "DELETE from radcheck where username='#{name}'"
+        )
+      end
+
       def sign_in(name, password, options = {})
         reply = request.authenticate(name, password, options)
         Session.start(name, password, options) if reply.success?
