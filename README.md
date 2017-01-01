@@ -2,7 +2,7 @@ Based on [radiustar](https://github.com/pjdavis/radiustar).
 
 #### DESCRIPTION:
 
-Ruby Library for interacting with (freeradius server)[http://freeradius.org/]
+Ruby Library for interacting with [freeradius server](http://freeradius.org/).
 
 #### FEATURES
 
