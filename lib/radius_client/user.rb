@@ -23,9 +23,8 @@ module RadiusClient
       end
 
       def delete(name)
-        conn.exec(
-          "DELETE from radcheck where username='#{name}'"
-        )
+        conn.exec("DELETE from radcheck WHERE username='#{name}'")
+        conn.exec("DELETE from radacct WHERE username='#{name}'")
       end
 
       def sign_in(name, password, options = {})
