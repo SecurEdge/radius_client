@@ -15,16 +15,21 @@ module RadiusClient
           "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', 'Cleartext-Password', ':=', '#{password}')"
         )
 
-        options.each do |key, value|
-          conn.exec(
-            "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', '#{key}', ':=', '#{value}')"
-          )
-        end
+        conn.exec(
+          "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', 'Expire-After', ':=', '#{options["Expire-After"]}')"
+        ) if options["Expire-After"].present?
+        conn.exec(
+          "INSERT INTO radreply (username, attribute, value) values ('#{name}', 'WISPr-Bandwidth-Max-Down', '#{options["WISPr-Bandwidth-Max-Down"]}')"
+        ) if options["WISPr-Bandwidth-Max-Down"].present?
+        conn.exec(
+          "INSERT INTO radreply (username, attribute, value) values ('#{name}', 'WISPr-Bandwidth-Max-Down', '#{options["WISPr-Bandwidth-Max-Up"]}')"
+        ) if options["WISPr-Bandwidth-Max-Up"].present?
       end
 
       def delete(name)
         conn.exec("DELETE from radcheck WHERE username='#{name}'")
         conn.exec("DELETE from radacct WHERE username='#{name}'")
+        conn.exec("DELETE from radreply WHERE username='#{name}'")
       end
 
       def sign_in(name, password, options = {})
