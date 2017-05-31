@@ -11,7 +11,7 @@ module RadiusClient
       end
 
       def sign_up(name, password, options = {})
-        user = conn.exec("SELECT * FROM radcheck WHERE username='#{username}'")
+        user = conn.exec("SELECT * FROM radcheck WHERE username='#{name}'")
         return if user.present?
 
         conn.exec(
