@@ -11,6 +11,9 @@ module RadiusClient
       end
 
       def sign_up(name, password, options = {})
+        user = conn.exec("SELECT * FROM radcheck WHERE username='#{username}'")
+        return if user.present?
+
         conn.exec(
           "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', 'Cleartext-Password', ':=', '#{password}')"
         )
