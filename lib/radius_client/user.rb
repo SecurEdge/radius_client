@@ -47,8 +47,9 @@ module RadiusClient
       def conn
         @conn ||= PG.connect(
           ENV["RADIUS_HOST"],
-          dbname: ENV["RADIUS_DB_NAME"],
-          user: ENV["RADIUS_DB_USER"]
+          dbname:   ENV["RADIUS_DB_NAME"],
+          user:     ENV["RADIUS_DB_USER"],
+          password: ENV["RADIUS_DB_PASSWORD"]
         )
       end
     end
