@@ -21,9 +21,15 @@ module RadiusClient
         conn.exec(
           "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', 'Expire-After', ':=', '#{options["Expire-After"]}')"
         ) if options["Expire-After"].present?
+
+        conn.exec(
+          "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', 'Expiration', ':=', '#{options["Expiration"]}')"
+        ) if options["Expiration"].present?
+
         conn.exec(
           "INSERT INTO radreply (username, attribute, value) values ('#{name}', 'WISPr-Bandwidth-Max-Down', '#{options["WISPr-Bandwidth-Max-Down"]}')"
         ) if options["WISPr-Bandwidth-Max-Down"].present?
+
         conn.exec(
           "INSERT INTO radreply (username, attribute, value) values ('#{name}', 'WISPr-Bandwidth-Max-Down', '#{options["WISPr-Bandwidth-Max-Up"]}')"
         ) if options["WISPr-Bandwidth-Max-Up"].present?
