@@ -4,8 +4,8 @@ require File.expand_path("../lib/radius_client/version", __FILE__)
 Gem::Specification.new do |spec|
   spec.name          = "radius_client"
   spec.version       = RadiusClient::VERSION
-  spec.authors       = %w(Slava\ Kisel)
-  spec.email         = %w(slava.kisel@flatstack.com)
+  spec.authors       = %w(FS team)
+  spec.email         = %w(fs-admin@flatstack.com)
 
   spec.summary       = "Ruby wrapper for freeradius server"
   spec.description   = "Ruby wrapper for freeradius server"

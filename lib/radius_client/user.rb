@@ -19,10 +19,6 @@ module RadiusClient
         )
 
         conn.exec(
-          "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', 'Expire-After', ':=', '#{options["Expire-After"]}')"
-        ) if options["Expire-After"].present?
-
-        conn.exec(
           "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', 'Expiration', ':=', '#{options["Expiration"]}')"
         ) if options["Expiration"].present?
 
