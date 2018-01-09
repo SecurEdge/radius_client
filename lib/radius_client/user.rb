@@ -2,39 +2,39 @@ module RadiusClient
   class User
     class << self
       def all
-        conn.exec("SELECT * FROM radcheck").map { |row| row }
+        conn["SELECT * FROM radcheck"].map { |row| row }
       end
 
       def update_by_username(username, attrs = {})
         fields = attrs.map { |key, value| "#{key} = '#{value}'" }.join(", ")
-        conn.exec("UPDATE radcheck SET #{fields} WHERE username = '#{username}' AND attribute = 'Cleartext-Password'")
+        conn.run("UPDATE radcheck SET #{fields} WHERE username = '#{username}' AND attribute = 'Cleartext-Password'")
       end
 
       def sign_up(name, password, options = {})
-        user = conn.exec("SELECT * FROM radcheck WHERE username='#{name}'")
+        user = conn["SELECT * FROM radcheck WHERE username='#{name}'"]
         return if user.count != 0
 
-        conn.exec(
+        conn.run(
           "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', 'Cleartext-Password', ':=', '#{password}')"
         )
 
-        conn.exec(
+        conn.run(
           "INSERT INTO radcheck (username, attribute, op, value) values ('#{name}', 'Expiration', ':=', '#{options["Expiration"]}')"
         ) if options["Expiration"].present?
 
-        conn.exec(
+        conn.run(
           "INSERT INTO radreply (username, attribute, value) values ('#{name}', 'WISPr-Bandwidth-Max-Down', '#{options["WISPr-Bandwidth-Max-Down"]}')"
         ) if options["WISPr-Bandwidth-Max-Down"].present?
 
-        conn.exec(
+        conn.run(
           "INSERT INTO radreply (username, attribute, value) values ('#{name}', 'WISPr-Bandwidth-Max-Down', '#{options["WISPr-Bandwidth-Max-Up"]}')"
         ) if options["WISPr-Bandwidth-Max-Up"].present?
       end
 
       def delete(name)
-        conn.exec("DELETE from radcheck WHERE username='#{name}'")
-        conn.exec("DELETE from radacct WHERE username='#{name}'")
-        conn.exec("DELETE from radreply WHERE username='#{name}'")
+        conn.run("DELETE from radcheck WHERE username='#{name}'")
+        conn.run("DELETE from radacct WHERE username='#{name}'")
+        conn.run("DELETE from radreply WHERE username='#{name}'")
       end
 
       def sign_in(name, password, options = {})
@@ -47,11 +47,14 @@ module RadiusClient
       end
 
       def conn
-        @conn ||= PG.connect(
-          ENV["RADIUS_HOST"],
-          dbname:   ENV["RADIUS_DB_NAME"],
-          user:     ENV["RADIUS_DB_USER"],
-          password: ENV["RADIUS_DB_PASSWORD"]
+        @conn ||= Sequel.connect(
+          adapter:         :postgres,
+          host:            ENV["RADIUS_HOST"],
+          port:            ENV["RADIUS_DB_PORT"] || 5432,
+          database:        ENV["RADIUS_DB_NAME"],
+          user:            ENV["RADIUS_DB_USER"],
+          password:        ENV["RADIUS_DB_PASSWORD"],
+          max_connections: ENV["RADIUS_DB_MAX_CONNECTIONS"] || 4
         )
       end
     end

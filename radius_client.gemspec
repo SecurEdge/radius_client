@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "simplecov", "~> 0.11.2"
   spec.add_development_dependency "minitest-reporters", "1.1.9"
 
-  spec.add_runtime_dependency "pg"
+  spec.add_runtime_dependency "pg", "0.21.0"
+  spec.add_runtime_dependency "sequel", "5.2.0"
   spec.add_runtime_dependency "ipaddr_extensions", "1.0.2"
 end

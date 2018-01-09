@@ -1,7 +1,7 @@
 require "test_helper"
 require "ostruct"
 
-describe RadiusClient::User do
+describe "RadiusClient::User" do
   describe "#sign_in" do
     it "sends authenticate request" do
       reply = MiniTest::Mock.new
