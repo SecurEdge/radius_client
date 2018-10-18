@@ -49,12 +49,12 @@ module RadiusClient
       def conn
         @conn ||= Sequel.connect(
           adapter:         :postgres,
-          host:            ENV["RADIUS_HOST"],
-          port:            ENV["RADIUS_DB_PORT"] || 5432,
-          database:        ENV["RADIUS_DB_NAME"],
-          user:            ENV["RADIUS_DB_USER"],
-          password:        ENV["RADIUS_DB_PASSWORD"],
-          max_connections: ENV["RADIUS_DB_MAX_CONNECTIONS"] || 4
+          host:            RadiusClient.configuration.db_host,
+          port:            RadiusClient.configuration.db_port || 5432,
+          database:        RadiusClient.configuration.db_name,
+          user:            RadiusClient.configuration.db_user,
+          password:        RadiusClient.configuration.db_password,
+          max_connections: RadiusClient.configuration.db_max_connections || 4
         )
       end
     end

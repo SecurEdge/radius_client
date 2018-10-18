@@ -38,6 +38,8 @@ module RadiusClient
 
     def configure
       yield(configuration)
+
+      configuration.db_host ||= configuration.host
     end
   end
 end
