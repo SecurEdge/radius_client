@@ -1,3 +1,7 @@
+#### 0.1.2 / 2018-10-18
+* Added database configuration fields
+* Forced User module to fetch credentials from the configuration instead of environment variables
+
 #### 0.0.9 / 2016-06-01
 * Added ability to store multiple values for a single attribute name
 * Fix VSA attribute_value unpacking length
